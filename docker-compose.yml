@@ -1,0 +1,55 @@
+#
+version: "3.7"
+services:
+
+# postgres:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+
+  service1:
+#    image: optimized-java-service:slimdebian
+    image: optimized-java-service:slimdebianfull
+    container_name: test-full-jdk-service1
+    mem_limit: 1g
+    ports:
+      - "8080:8080"
+      - "7091:7091"
+      - "7012:7012"
+    depends_on:
+    - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+#  service2:
+#    image: optimized-java-service:slimdebian
+#    container_name: test-service2
+#    mem_limit: 1g
+#    ports:
+#      - "8081:8080"
+#    depends_on:
+#    - db
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
+#      - SPRING_DATASOURCE_USERNAME=postgres
+#      - SPRING_DATASOURCE_PASSWORD=postgres
+#      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+#  service3:
+#    image: optimized-java-service:slimdebian
+#    container_name: test-service3
+#    mem_limit: 1g
+#    ports:
+#      - "8082:8080"
+#    depends_on:
+#    - db
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
+#      - SPRING_DATASOURCE_USERNAME=postgres
+#      - SPRING_DATASOURCE_PASSWORD=postgres
+#      - SPRING_JPA_HIBERNATE_DDL_AUTO=update

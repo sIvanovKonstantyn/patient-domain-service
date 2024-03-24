@@ -1,0 +1,14 @@
+# Ubuntu is the best
+FROM ubuntu:latest
+
+# Install the java
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive \
+    apt install openjdk-21-jdk -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Continue with your application deployment
+RUN mkdir /opt/app
+COPY /build/libs/patient-domain-service-0.0.1-SNAPSHOT.jar /opt/app
+CMD ["java", "-jar", "/opt/app/patient-domain-service-0.0.1-SNAPSHOT.jar"]
