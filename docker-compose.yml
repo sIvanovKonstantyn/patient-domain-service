@@ -13,9 +13,8 @@ services:
 
   service1:
 #    image: optimized-java-service:slimdebian
-    image: optimized-java-service:slimdebianfull
+    image: patient-domain-service
     container_name: test-full-jdk-service1
-    mem_limit: 1g
     ports:
       - "8080:8080"
       - "7012:7012"

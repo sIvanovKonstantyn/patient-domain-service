@@ -1,11 +1,15 @@
 package com.example.patientdomainservice;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+import org.hibernate.query.spi.Limit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class PatientDomainServiceApplication {
 	@Autowired
 	private PatientRepository repository;
+	@Autowired
+	private OrganizationRepository organizationRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(PatientDomainServiceApplication.class, args);
@@ -23,19 +29,18 @@ public class PatientDomainServiceApplication {
 
 	@PostMapping
 	public Patient createPatient(@RequestBody Patient patient) {
-		patient.setLongText(buildRandomLongText());
-        return repository.save(patient);
-    }
+		Optional<Organization> foundOrganization = organizationRepository.findOneByName(patient.getManagingOrganization()
+			.getName());
 
-	private String buildRandomLongText() {
-		var sb = new StringBuilder();
-		for (int i = 0; i < 10000; i++)
-			sb.append(UUID.randomUUID());
-		return sb.toString();
-	}
+		patient.setManagingOrganization(
+			foundOrganization.orElse(organizationRepository.save(patient.getManagingOrganization())));
+
+		return repository.save(patient);
+    }
 
 	@GetMapping
 	public List<Patient> getPatients() {
-        return repository.findAll();
+        return repository.findAll(PageRequest.of(0, 100))
+	            .getContent();
     }
 }
