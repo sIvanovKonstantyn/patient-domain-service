@@ -23,5 +23,5 @@ COPY --from=jre-build /javaruntime $JAVA_HOME
 
 # Continue with your application deployment
 RUN mkdir /opt/app
-COPY /build/libs/patient-domain-service-0.0.1-SNAPSHOT.jar /opt/app
+COPY /target/patient-domain-service-0.0.1-SNAPSHOT.jar /opt/app
 CMD ["java", "-jar", "/opt/app/patient-domain-service-0.0.1-SNAPSHOT.jar"]
