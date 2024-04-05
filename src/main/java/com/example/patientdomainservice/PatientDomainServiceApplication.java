@@ -2,14 +2,12 @@ package com.example.patientdomainservice;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
-import org.hibernate.query.spi.Limit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,7 +31,7 @@ public class PatientDomainServiceApplication {
 			.getName());
 
 		patient.setManagingOrganization(
-			foundOrganization.orElse(organizationRepository.save(patient.getManagingOrganization())));
+			foundOrganization.orElseGet(() -> organizationRepository.save(patient.getManagingOrganization())));
 
 		return repository.save(patient);
     }
