@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
@@ -37,8 +38,11 @@ public class PatientDomainServiceApplication {
     }
 
 	@GetMapping
-	public List<Patient> getPatients() {
-        return repository.findAll(PageRequest.of(0, 100))
-	            .getContent();
+	public List<Patient> getPatientsByFilters(@RequestParam(required = false) String name,
+		@RequestParam(required = false) Integer pageNumber, @RequestParam(required = false) Integer pageSize) {
+
+        return name == null
+	        ? repository.findAll(PageRequest.of(pageNumber, pageSize)).getContent()
+	        : repository.findAllByName(name, PageRequest.of(0, 1000)).getContent();
     }
 }
