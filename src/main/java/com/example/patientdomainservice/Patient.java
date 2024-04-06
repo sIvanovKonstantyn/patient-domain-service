@@ -1,7 +1,7 @@
 package com.example.patientdomainservice;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -10,11 +10,21 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
 
 @Data
 @Entity
+@NamedEntityGraph(
+    name = "patient-entity-graph",
+    attributeNodes = {
+        @NamedAttributeNode("telecom"),
+        @NamedAttributeNode("addresses"),
+        @NamedAttributeNode("managingOrganization"),
+    }
+)
 public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,10 +33,10 @@ public class Patient {
     private String name;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "patient_id", nullable=false)
-    private List<Telecom> telecom;
+    private Set<Telecom> telecom;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "patient_id", nullable=false)
-    private List<Address> addresses;
+    private Set<Address> addresses;
     private LocalDate birthDate;
     private Gender gender;
     private byte[] photo;
