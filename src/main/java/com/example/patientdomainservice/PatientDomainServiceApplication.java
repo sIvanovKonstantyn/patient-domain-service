@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,8 +27,8 @@ public class PatientDomainServiceApplication {
 
 	@PostMapping
 	public Patient createPatient(@RequestBody Patient patient) {
-		Optional<Organization> foundOrganization = organizationRepository.findOneByName(patient.getManagingOrganization()
-			.getName());
+		Optional<Organization> foundOrganization = organizationRepository.findOneByOrganizationName(patient.getManagingOrganization()
+			.getOrganizationName());
 
 		patient.setManagingOrganization(
 			foundOrganization.orElseGet(() -> organizationRepository.save(patient.getManagingOrganization())));
@@ -42,7 +41,7 @@ public class PatientDomainServiceApplication {
 		@RequestParam(required = false) Integer pageNumber, @RequestParam(required = false) Integer pageSize) {
 
         return name == null
-	        ? repository.findAll(PageRequest.of(pageNumber, pageSize)).getContent()
+	        ? repository.findAllLimited(pageNumber, pageSize)
 	        : repository.findAllByName(name, PageRequest.of(0, 1000)).getContent();
     }
 }
