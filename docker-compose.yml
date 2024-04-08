@@ -12,7 +12,9 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: postgres
-
+    command: >
+      postgres
+      -c shared_preload_libraries='pg_stat_statements'
   service1:
 #    image: optimized-java-service:slimdebian
     image: patient-domain-service
