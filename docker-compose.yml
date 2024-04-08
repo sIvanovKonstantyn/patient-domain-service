@@ -10,9 +10,9 @@ services:
     cpus: 4
     cpuset: "2-5"
     restart: always
+    command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all -c max_connections=200
     environment:
       POSTGRES_PASSWORD: postgres
-    command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all -c max_connections=200
   service1:
 #    image: optimized-java-service:slimdebian
     image: patient-domain-service
