@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,6 +38,7 @@ public class PatientDomainServiceApplication {
     }
 
 	@GetMapping
+	@Cacheable(value = "patientsByNames")
 	public List<Patient> getPatientsByFilters(@RequestParam(required = false) String name,
 		@RequestParam(required = false) Integer pageNumber, @RequestParam(required = false) Integer pageSize) {
 
