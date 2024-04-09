@@ -41,7 +41,7 @@ public class PatientDomainServiceApplication {
 		@RequestParam(required = false) Integer pageNumber, @RequestParam(required = false) Integer pageSize) {
 
         return name == null
-	        ? repository.findAllLimited(pageNumber, pageSize)
+	        ? repository.findAll(PageRequest.of(pageNumber, pageSize)).getContent()
 	        : repository.findAllByName(name, PageRequest.of(0, 1000)).getContent();
     }
 }
