@@ -1,5 +1,5 @@
 package com.example.patientdomainservice;
 
 public interface RateLimiter {
-    boolean tryConsume();
+    boolean tryConsume(String key);
 }

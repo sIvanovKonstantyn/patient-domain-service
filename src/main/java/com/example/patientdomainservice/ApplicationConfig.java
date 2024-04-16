@@ -1,6 +1,9 @@
 package com.example.patientdomainservice;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.cache.CacheManager;
@@ -19,10 +22,7 @@ import io.github.bucket4j.Bucket;
 @Configuration
 @EnableCaching
 public class ApplicationConfig implements WebMvcConfigurer {
-    Bandwidth limit = Bandwidth.builder()
-        .capacity(10)
-        .refillGreedy(1, Duration.ofMillis(100))
-        .build();
+    Map<String, Bucket> endpointBuckets = new HashMap<>();
 
     @Bean
     public CacheManager cacheManager() {
@@ -36,11 +36,55 @@ public class ApplicationConfig implements WebMvcConfigurer {
 
     @Bean
     public RateLimiter rateLimiter() {
-        Bucket bucket = Bucket.builder()
-            .addLimit(limit)
+        endpointBuckets.put(
+            "name/GET",
+            createGetByNameBucket()
+        );
+
+        endpointBuckets.put(
+            "pageNumberpageSize/GET",
+            createGetPageBucket()
+        );
+
+        endpointBuckets.put(
+            "/POST",
+            createAddPatientBucket()
+        );
+
+        return (String key) -> endpointBuckets.get(key).tryConsume(1);
+    }
+
+    private Bucket createAddPatientBucket() {
+        Bandwidth limit = Bandwidth.builder()
+            .capacity(1000)
+            .refillGreedy(100, Duration.ofMillis(100))
             .build();
 
-        return () -> bucket.tryConsume(1);
+        return Bucket.builder()
+            .addLimit(limit)
+            .build();
+    }
+
+    private Bucket createGetPageBucket() {
+        Bandwidth limit = Bandwidth.builder()
+            .capacity(100)
+            .refillGreedy(10, Duration.ofMillis(100))
+            .build();
+
+        return Bucket.builder()
+            .addLimit(limit)
+            .build();
+    }
+
+    private Bucket createGetByNameBucket() {
+        Bandwidth limit = Bandwidth.builder()
+            .capacity(10)
+            .refillGreedy(1, Duration.ofMillis(100))
+            .build();
+
+        return Bucket.builder()
+            .addLimit(limit)
+            .build();
     }
 
     @Override
